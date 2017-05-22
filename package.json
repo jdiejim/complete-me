@@ -6,6 +6,11 @@
   "directories": {
     "test": "tests"
   },
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  },
   "scripts": {
     "test": "mocha --compilers js:babel-core/register tests"
   },
