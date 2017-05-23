@@ -1,41 +1,55 @@
 import { expect } from 'chai';
 import Trie from '../scripts/Trie';
-import Node from '../scripts/Node';
 
-describe('', () => {
+describe('Trie', () => {
 
   let trie;
+  let words;
 
   beforeEach(() => {
     trie = new Trie();
+    words = ['pizza', 'hot', 'dog', 'hamburger', 'pizzas', 'paprika', 'pilsiner', 'ham', 'piz'];
   })
 
-  it('', () => {
-    const word1 = 'pizza';
-    const word2 = 'word';
-    const word3 = 'pizzas';
-
-    trie.insert(word1);
-    // expect(trie.root.children[word1[0]].letter).to.equal(word1[0]);
-    // expect(trie.root.children[word1[0]].letter).to.equal(word1[0]);
-
-    trie.insert(word2);
-    trie.insert(word3);
-    // console.log(trie.root);
-    trie.count()
-    // expect(trie.root.children[word2[0]].children[word2[1]].letter).to.equal(word2[1]);
-  })
-
-  it('Should count the possible words that were inserted', () => {
-    const words = ['pizza', 'hot', 'dog', 'hamburger', 'pizzas', 'paprika', 'pilsiner'];
+  it('Should be able to insert words ', () => {
+    let firstLetter = words[0][0];
+    let secondLetter = words[0][1];
 
     words.forEach(e => {
       trie.insert(e);
     })
 
-    trie.suggest('');
+    expect(trie.root.children[firstLetter].letter).to.equal(firstLetter);
+    expect(trie.root.children[firstLetter].children[secondLetter].letter).to.equal(secondLetter);
+  })
+
+  it('Should be able to count the potential words previously inserted', () => {
+    words.forEach(e => {
+      trie.insert(e);
+    })
 
     expect(trie.count()).to.equal(words.length);
+  })
+
+  it('Should be able to return array of suggestions by searching for keyword', () => {
+    let keyword = 'ham';
+    let filtered = words.filter(e => e.includes(keyword)).sort();
+    //should i sort?
+    words.forEach(e => {
+      trie.insert(e);
+    })
+
+    expect(trie.suggest(keyword)).to.deep.equal(filtered);
+  })
+
+  it('Should be able to return null if there is no suggested word', () => {
+    let keyword = '';
+
+    words.forEach(e => {
+      trie.insert(e);
+    })
+
+    expect(trie.suggest(keyword)).to.deep.equal(null);
   })
 })
 

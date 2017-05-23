@@ -3,49 +3,36 @@ import Node from './Node';
 class Trie {
   constructor() {
     this.root = new Node('root');
-    this.countWords = 0;
   }
 
   insert(word) {
     const letters = word.split('').map(e => new Node(e));
     let current = this.root;
-    let newWord = '';
 
     letters.forEach((node, i, a) => {
       current.children = current.children || {};
       if (!current.children[node.letter]) {
         current.children[node.letter] = node;
       }
-      newWord += current.children[node.letter].letter;
       if (i === a.length - 1) {
         current.children[node.letter].isCompleteWord = true;
       }
-      // console.log(newWord);
-      // console.log(current.children[node.letter].isCompleteWord);
-      // console.log();
       current = current.children[node.letter];
     });
   }
 
-  count() {
-    let current = this.root.children;
-    let counter = 0;
-
-    search(current, counter);
-    return counter
-
-    function search(node) {
-      if (!node) {
-        return;
-      }
-
-      let keys = Object.keys(node);
-
-      keys.forEach(e => {
-        counter += node[e].isCompleteWord ? 1 : 0;
-        search(node[e].children)
-      })
+  count(node = this.root.children, counter = 0) {
+    if (!node) {
+      return counter;
     }
+
+    let keys = Object.keys(node);
+
+    keys.forEach(e => {
+      counter += node[e].isCompleteWord ? 1 : 0;
+      counter = this.count(node[e].children, counter)
+    })
+    return counter;
   }
 
 // BUG: startign letter not recroded
@@ -55,16 +42,23 @@ class Trie {
   suggest(word = '') {
     const letters = word.split('');
     let current = this.root.children;
+    let array = [];
+    let completeWord = word;
+    let existingWord = '';
 
     letters.forEach(e => {
+      existingWord += e;
+      if (current[e].isCompleteWord) {
+        array.unshift(existingWord);
+      }
       current = current[e].children;
     })
 
-    let array = [];
-    let completeWord = word;
+    if (word === '') {
+      return null
+    }
 
     search(current, array);
-    console.log(array);
     return array
 
     function search(node) {
@@ -122,3 +116,44 @@ export default Trie;
 //     })
 //   }
 // }
+
+// insert(word) {
+//   const letters = word.split('').map(e => new Node(e));
+//   let current = this.root;
+//   let newWord = '';
+//
+//   letters.forEach((node, i, a) => {
+//     current.children = current.children || {};
+//     if (!current.children[node.letter]) {
+//       current.children[node.letter] = node;
+//     }
+//     newWord += current.children[node.letter].letter;
+//     if (i === a.length - 1) {
+//       current.children[node.letter].isCompleteWord = true;
+//     }
+//     // console.log(newWord);
+//     // console.log(current.children[node.letter].isCompleteWord);
+//     // console.log();
+//     current = current.children[node.letter];
+//   });
+// }
+
+// count() {
+//   let current = this.root.children;
+//   let counter = 0;
+//
+//   search(current, counter);
+//   return counter
+//
+//   function search(node) {
+//     if (!node) {
+//       return;
+//     }
+//
+//     let keys = Object.keys(node);
+//
+//     keys.forEach(e => {
+//       counter += node[e].isCompleteWord ? 1 : 0;
+//       search(node[e].children)
+//     })
+//   }
