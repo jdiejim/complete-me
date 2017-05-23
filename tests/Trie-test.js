@@ -32,8 +32,10 @@ describe('Trie', () => {
   })
 
   it('Should be able to return array of suggestions by searching for keyword', () => {
-    let keyword = 'ham';
+    let keyword = 'pi';
     let filtered = words.filter(e => e.includes(keyword)).sort();
+    console.log(filtered);
+
     //should i sort?
     words.forEach(e => {
       trie.insert(e);

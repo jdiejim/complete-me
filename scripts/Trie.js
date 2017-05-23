@@ -36,13 +36,11 @@ class Trie {
   }
 
 // BUG: startign letter not recroded
-// BUG: more than one letter word
+// BUG: more removes one letter when plsener pilsener
 // BUG: case not found - > undefinde
 
-  suggest(word = '') {
+  suggest(word = '', current = this.root.children, array = []) {
     const letters = word.split('');
-    let current = this.root.children;
-    let array = [];
     let completeWord = word;
     let existingWord = '';
 
@@ -59,7 +57,8 @@ class Trie {
     }
 
     search(current, array);
-    return array
+    console.log(array.sort());
+    return array;
 
     function search(node) {
       if (!node) {
