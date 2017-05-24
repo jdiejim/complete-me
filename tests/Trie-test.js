@@ -1,5 +1,9 @@
 import { expect } from 'chai';
 import Trie from '../scripts/Trie';
+import fs from 'fs';
+
+const text = "/usr/share/dict/words";
+const dictionary = fs.readFileSync(text).toString().trim().split('\n')
 
 describe('Trie', () => {
 
@@ -8,7 +12,7 @@ describe('Trie', () => {
 
   beforeEach(() => {
     trie = new Trie();
-    words = ['pizza', 'hot', 'dog', 'hamburger', 'pizzas', 'paprika', 'pilsiner', 'ham', 'piz'];
+    words = ['pizza', 'hot', 'dog', 'hamburger', 'pizzas', 'paprika', 'pilsiner', 'ham', 'pill'];
   })
 
   it('Should be able to insert words ', () => {
@@ -31,10 +35,9 @@ describe('Trie', () => {
     expect(trie.count()).to.equal(words.length);
   })
 
-  it('Should be able to return array of suggestions by searching for keyword', () => {
-    let keyword = 'pi';
+  it.only('Should be able to return array of suggestions by searching for keyword', () => {
+    let keyword = 'p';
     let filtered = words.filter(e => e.includes(keyword)).sort();
-    console.log(filtered);
 
     //should i sort?
     words.forEach(e => {
@@ -52,6 +55,14 @@ describe('Trie', () => {
     })
 
     expect(trie.suggest(keyword)).to.deep.equal(null);
+  })
+
+  it('Should be able to return null if there is no suggested word', () => {
+    let keyword = 'piz';
+
+    // trie.populate(dictionary);
+
+    expect(trie.suggest(keyword)).to.deep.equal('null');
   })
 })
 
