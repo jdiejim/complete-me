@@ -54,15 +54,17 @@ class Trie {
     let index = 0;
 
     letters.forEach(e => {
-      existingWord += e;
-      if (current[e].isCompleteWord) {
-        array.unshift(existingWord);
-      }
-      // console.log(current[e].level);
+      // existingWord += e;
+      // if (current[e].isCompleteWord) {
+      //   array.unshift(existingWord);
+      // }
       if (!levels[current[e].level]) {
-        levels[current[e].level] = [current[e].letter];
+        levels[current[e].level] = {}
+        levels[current[e].level].letter = [current[e].letter];
+        levels[current[e].level].isWord = current[e].isCompleteWord;
       } else {
-        levels[current[e].level] = levels[current[e].level].push(current[e].level);
+        levels[current[e].level].letter = levels[current[e].level].letter.push(current[e].level);
+        levels[current[e].level].isWord = current[e].isCompleteWord;
       }
       current = current[e].children;
     })
@@ -72,8 +74,7 @@ class Trie {
     }
 
     search(current);
-    // console.log(levels);
-    return array;
+    return array.sort();
 
     function search(node) {
       if (!node) {
@@ -82,10 +83,14 @@ class Trie {
         let newWord = ''
 
         levelKeys.forEach(e => {
-          newWord += levels[e][0]
+          newWord += levels[e].letter[0]
+          if (levels[e].isWord) {
+            array.push(newWord)
+          }
         })
         console.log(newWord);
-        array.push(newWord)
+        // array.push(newWord)
+        console.log(array);
         completeWord = word;
         return null;
       }
@@ -94,10 +99,12 @@ class Trie {
 
       keys.forEach(e => {
         if (!levels[node[e].level]) {
-          levels[node[e].level] = [node[e].letter];
+          levels[node[e].level] = {}
+          levels[node[e].level].letter = [node[e].letter];
+          levels[node[e].level].isWord = node[e].isCompleteWord;
         } else {
           let letter = node[e].letter;
-          let levelArray = levels[node[e].level];
+          let levelArray = levels[node[e].level].letter;
 
           levelArray.shift();
           levelArray.push(letter);
@@ -107,9 +114,13 @@ class Trie {
           for (let i = 0; i < node[e].level; i++) {
             obj[i] = levels[i]
           }
-
+          console.log(obj);
+          console.log(levels[node[e].level]);
+          console.log(node[e].level);
           levels = obj;
-          levels[node[e].level] = levelArray;
+          levels[node[e].level] = {}
+          levels[node[e].level].letter = levelArray;
+          levels[node[e].level].isWord = node[e].isCompleteWord;
         }
         search(node[e].children)
       })
