@@ -36,7 +36,7 @@ describe('Trie', () => {
   })
 
   it.only('Should be able to return array of suggestions by searching for keyword', () => {
-    let keyword = 'p';
+    let keyword = 'pi';
     let filtered = words.filter(e => e.includes(keyword)).sort();
 
     //should i sort?

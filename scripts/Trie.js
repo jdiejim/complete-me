@@ -42,31 +42,6 @@ class Trie {
     return counter;
   }
 
-  // suggest(word, completed = '', node = this.root, array = [], level = []) {
-  //   if (node.letter === 'root') {
-  //     word.toLowerCase().split('').forEach(e => {
-  //       node = node.children[e];
-  //     })
-  //     completed = word;
-  //   }
-  //
-  //   if (!node.children) {
-  //     return;
-  //   }
-  //
-  //   let keys = Object.keys(node.children);
-  //
-  //   keys.forEach(e => {
-  //     completed += node.children[e].letter;
-  //     if (node.children[e].isCompleteWord) {
-  //       array.push(completed);
-  //     }
-  //     this.suggest(word, completed, node.children[e], array);
-  //     completed = '';
-  //   })
-  //   return array;
-  // }
-
   suggest(word = '') {
     const letters = word.split('');
     let current = this.root.children
@@ -105,6 +80,7 @@ class Trie {
         console.log(levels);
         let levelKeys = Object.keys(levels);
         let newWord = ''
+
         levelKeys.forEach(e => {
           newWord += levels[e][0]
         })
@@ -122,15 +98,17 @@ class Trie {
         } else {
           let letter = node[e].letter;
           let levelArray = levels[node[e].level];
+
           levelArray.shift();
           levelArray.push(letter);
-          // console.log(node[e].level);
-          let level = node[e].level;
+
           let obj = {};
+
           for (let i = 0; i < node[e].level; i++) {
             obj[i] = levels[i]
           }
-          levels = obj
+
+          levels = obj;
           levels[node[e].level] = levelArray;
         }
         search(node[e].children)
@@ -140,149 +118,3 @@ class Trie {
 }
 
 export default Trie;
-
-
-// BUG: startign letter not recroded
-// BUG: more removes one letter when plsener pilsener
-// BUG: case not found - > undefinde
-// count() {
-//   let current = this.root.children;
-//   let counter = 0;
-//
-//
-//   search(current, counter);
-//   console.log(counter);
-//
-//   function search(node) {
-//
-//     if (!node) {
-//       return 'hi';
-//     }
-//
-//     // console.log(node);
-//     // console.log();
-//     // console.log(node.children);
-//
-//     let keys = Object.keys(node);
-//
-//     console.log();
-//     // console.log(keys);
-//     console.log();
-//
-//     keys.forEach(e => {
-//       console.log(e);
-//       console.log(node[e].isCompleteWord);
-//       counter += node[e].isCompleteWord ? 1 : 0;
-//       search(node[e].children)
-//     })
-//   }
-// }
-
-// insert(word) {
-//   const letters = word.split('').map(e => new Node(e));
-//   let current = this.root;
-//   let newWord = '';
-//
-//   letters.forEach((node, i, a) => {
-//     current.children = current.children || {};
-//     if (!current.children[node.letter]) {
-//       current.children[node.letter] = node;
-//     }
-//     newWord += current.children[node.letter].letter;
-//     if (i === a.length - 1) {
-//       current.children[node.letter].isCompleteWord = true;
-//     }
-//     // console.log(newWord);
-//     // console.log(current.children[node.letter].isCompleteWord);
-//     // console.log();
-//     current = current.children[node.letter];
-//   });
-// }
-
-// count() {
-//   let current = this.root.children;
-//   let counter = 0;
-//
-//   search(current, counter);
-//   return counter
-//
-//   function search(node) {
-//     if (!node) {
-//       return;
-//     }
-//
-//     let keys = Object.keys(node);
-//
-//     keys.forEach(e => {
-//       counter += node[e].isCompleteWord ? 1 : 0;
-//       search(node[e].children)
-//     })
-//   }
-
-
-// suggest(word = '', current = this.root.children, array = []) {
-//   const letters = word.split('');
-//   let completeWord = word;
-//   let existingWord = '';
-//
-//   letters.forEach(e => {
-//     existingWord += e;
-//     if (current[e].isCompleteWord) {
-//       array.unshift(existingWord);
-//     }
-//     current = current[e].children;
-//   })
-//
-//   if (word === '') {
-//     return null
-//   }
-//
-//   search(current, array);
-//   console.log(array.sort());
-//   return array;
-//
-//   function search(node) {
-//     if (!node) {
-//       completeWord = word;
-//       return null;
-//     }
-//
-//     let keys = Object.keys(node);
-//
-//     keys.forEach(e => {
-//       completeWord += node[e].letter;
-//       if (node[e].isCompleteWord) {
-//         array.push(completeWord);
-//       }
-//       search(node[e].children)
-//     })
-//   }
-// }
-
-
-// suggest(word, completed = '', node = this.root, array = []) {
-//   if (node.letter === 'root') {
-//     word.toLowerCase().split('').forEach(e => {
-//       node = node.children[e];
-//     })
-//     // completed = word;
-//   }
-//
-//   if (!node.children) {
-//     return;
-//   }
-//
-//   let keys = Object.keys(node.children);
-//
-//   keys.forEach(e => {
-//     completed += node.children[e].letter;
-//     if (node.children[e].isCompleteWord) {
-//       array.push(completed);
-//     }
-//     this.suggest(word, completed, node.children[e], array);
-//     completed = ''
-//     // node = node.children
-//   })
-//   console.log(array);
-//   return array;
-// }
