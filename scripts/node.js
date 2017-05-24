@@ -2,7 +2,7 @@ class Node {
   constructor(letter) {
     this.letter = letter;
     this.children = null;
-    this.isCompleteWord = false;
+    this.isWord = false;
   }
 }
 

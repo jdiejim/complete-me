@@ -5,7 +5,8 @@ import fs from 'fs';
 const text = "/usr/share/dict/words";
 const dictionary = fs.readFileSync(text).toString().trim().split('\n')
 
-describe('Trie', () => {
+describe('Trie', function () {
+  this.timeout(15000)
 
   let trie;
   let words;
@@ -35,7 +36,7 @@ describe('Trie', () => {
     expect(trie.count()).to.equal(words.length);
   })
 
-  it.only('Should be able to return array of suggestions by searching for keyword', () => {
+  it('Should be able to return array of suggestions by searching for keyword', () => {
     let keyword = 'h';
     let filtered = words.filter(e => e.includes(keyword)).sort();
 
@@ -58,11 +59,32 @@ describe('Trie', () => {
   })
 
   it('Should be able to return null if there is no suggested word', () => {
-    let keyword = 'piz';
+    let keyword = 'pizz';
+    // let filterFirst = dictionary.filter(e => e[0] === keyword[0])
+    // let filtered = filterFirst.filter(e => e.includes(keyword)).sort();
+    // console.log(filtered);
 
-    // trie.populate(dictionary);
 
-    expect(trie.suggest(keyword)).to.deep.equal('null');
+
+    expect(trie.suggest(keyword)).to.deep.equal([ 'pizza', 'pizzeria', 'pizzicato', 'pizzle' ]);
+  })
+})
+
+describe('Trie with dictionary inserted', function () {
+  const trie = new Trie();
+
+  trie.populate(dictionary);
+
+  it.only('Should be able to return null if there is no suggested word', () => {
+    let keyword = 'pol';
+    let filtered = dictionary.filter(e => e.substring(0, keyword.length) === keyword).sort();
+
+    expect(trie.suggest(keyword)).to.deep.equal(filtered);
+  })
+
+  it.only('Should be able to count the potential words previously inserted', () => {
+
+    expect(trie.count()).to.equal(235886);
   })
 })
 
