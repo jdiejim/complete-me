@@ -5,68 +5,84 @@ import fs from 'fs';
 const text = "/usr/share/dict/words";
 const dictionary = fs.readFileSync(text).toString().trim().split('\n')
 
-describe('Trie', function () {
-  this.timeout(15000)
-
+describe('Trie with words inserted', () => {
   let trie;
   let words;
 
   beforeEach(() => {
     trie = new Trie();
-    words = ['pizza', 'hot', 'dog', 'hamburger', 'pizzas', 'paprika', 'pilsiner', 'ham', 'pill'];
+    words = ['pizza', 'hot', 'dog', 'hamburger', 'pizzas', 'paprika', 'pilsiner', 'ham', 'pill', 'paper'];
   })
 
-  it('Should be able to insert words ', () => {
-    let firstLetter = words[0][0];
-    let secondLetter = words[0][1];
+  it('Should have a method that inserts word', () => {
+    let word = 'pizza';
 
-    words.forEach(e => {
-      trie.insert(e);
-    })
+    trie.insert(word);
+    let node = trie.root.children;
+    let expectedLetter = Object.keys(node).join('');
 
-    expect(trie.root.children[firstLetter].letter).to.equal(firstLetter);
-    expect(trie.root.children[firstLetter].children[secondLetter].letter).to.equal(secondLetter);
+    expect(expectedLetter).to.equal(word[0]);
   })
 
-  it('Should be able to count the potential words previously inserted', () => {
-    words.forEach(e => {
-      trie.insert(e);
-    })
+  it('Should have a method that populates array of words', () => {
+    let firstElementLetters = words.map(e => e[0]).reduce((t, c) => {
+      if (!t.includes(c)) {
+        t.push(c);
+      }
+      return t;
+    }, []);
+
+    trie.populate(words)
+
+    let nodeChildren = trie.root.children;
+    let expectedChildren = Object.keys(nodeChildren);
+
+    expect(expectedChildren).to.deep.equal(firstElementLetters);
+  })
+
+  it('Should have a method that counts inserted words', () => {
+    trie.populate(words)
 
     expect(trie.count()).to.equal(words.length);
   })
 
-  it('Should be able to return array of suggestions by searching for keyword', () => {
-    let keyword = 'h';
+  it('Should have a method that returns an array of suggestions by searching for a keyword', () => {
+    let keyword = 'p';
     let filtered = words.filter(e => e.includes(keyword)).sort();
 
-    //should i sort?
-    words.forEach(e => {
-      trie.insert(e);
-    })
+    trie.populate(words)
 
-    expect(trie.suggest(keyword)).to.deep.equal(filtered);
+    let suggestions = trie.suggest(keyword).sort();
+
+    expect(suggestions).to.deep.equal(filtered);
   })
 
   it('Should be able to return null if there is no suggested word', () => {
     let keyword = '';
 
-    words.forEach(e => {
-      trie.insert(e);
-    })
+    trie.populate(words)
 
-    expect(trie.suggest(keyword)).to.deep.equal(null);
+    let suggestions = trie.suggest(keyword);
+
+    expect(suggestions).to.deep.equal(null);
   })
 
-  it('Should be able to return null if there is no suggested word', () => {
-    let keyword = 'pizz';
-    // let filterFirst = dictionary.filter(e => e[0] === keyword[0])
-    // let filtered = filterFirst.filter(e => e.includes(keyword)).sort();
-    // console.log(filtered);
+  it('Should have a method that selects a word, and it will appear at the top of suggestions', () => {
+    let keyword = 'p';
+    let selected = 'pill';
+    let filtered = words.filter(e => e.includes(keyword)).sort();
 
+    trie.populate(words)
 
+    let suggestions = trie.suggest(keyword).sort();
 
-    expect(trie.suggest(keyword)).to.deep.equal([ 'pizza', 'pizzeria', 'pizzicato', 'pizzle' ]);
+    expect(suggestions).to.deep.equal(filtered);
+
+    trie.select(selected);
+    suggestions = trie.suggest(keyword);
+    let firstSuggested = suggestions[0];
+
+    expect(firstSuggested).to.deep.equal(selected);
   })
 })
 
@@ -75,31 +91,40 @@ describe('Trie with dictionary inserted', () => {
 
   trie.populate(dictionary);
 
-  it.only('Should be able to return null if there is no suggested word', () => {
-    let keyword = 'apple';
+  it('Should have a method that returns an array of suggestions by searching for a keyword', () => {
+    let keyword = 'app';
     let filtered = dictionary.filter(e => e.substring(0, keyword.length) === keyword).sort();
 
-    trie.select(keyword);
-    trie.select('applenut');
-    trie.select('applenut');
-    trie.select('applewife');
-    expect(trie.suggest(keyword)).to.deep.equal(filtered);
+    let suggestions = trie.suggest(keyword).sort();
+
+    expect(suggestions).to.deep.equal(filtered);
   })
 
-  it('Should be able to count the potential words previously inserted', () => {
-
-    expect(trie.count()).to.equal(235886);
+  it('Should have a method that counts inserted words', () => {
+    expect(trie.count()).to.equal(dictionary.length);
   })
 
-  it.only('Should be able to return null if there is no suggested word', () => {
-    let keyword = 'apple';
-    // trie.select(keyword)
-    console.log(trie.select(keyword));
+  it('Should have a method that selects a word, and it will appear at the top of suggestions', () => {
+    let keyword = 'app';
+    let select1 = 'applenut';
+    let select2 = 'applenut';
+    let filtered = dictionary.filter(e => e.substring(0, keyword.length) === keyword).sort();
 
-    expect(0).to.deep.equal(0);
+    let suggestions = trie.suggest(keyword).sort();
+
+    expect(suggestions).to.deep.equal(filtered);
+
+    trie.select(select1);
+
+    suggestions = trie.suggest(keyword);
+    let expectedWord = suggestions[0];
+
+    expect(expectedWord).to.equal(select1);
+
+    trie.select(select2);
+    trie.select(select2);
+    suggestions = trie.suggest(keyword);
+
+    expect(expectedWord).to.equal(select2);
   })
 })
-
-// TODO: true test
-// TODO: true on each word if same name plus other lettres
-// TODO: wierd stuff

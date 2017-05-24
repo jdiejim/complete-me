@@ -54,7 +54,6 @@ class Trie {
     if (node.isWord) {
       node.frequency++;
     }
-    // console.log(node);
   }
 
   suggest(word = '') {
@@ -81,7 +80,7 @@ class Trie {
     })
 
     if (word === '') {
-      return;
+      return null;
     }
 
     search(current);
