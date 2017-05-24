@@ -42,16 +42,31 @@ class Trie {
     return counter;
   }
 
+  select(word, node = this.root) {
+    if (!node.children) {
+      return;
+    }
+
+    [...word].forEach(e => {
+      node = node.children[e];
+    })
+
+    if (node.isWord) {
+      node.frequency++;
+    }
+    // console.log(node);
+  }
+
   suggest(word = '') {
-    const letters = word.split('');
     let current = this.root.children
     let array = [];
     let levels = {};
 
-    letters.forEach((e, i, a) => {
+    [...word].forEach((e, i, a) => {
       if (!levels[current[e].level]) {
         levels[current[e].level] = {}
         levels[current[e].level].letter = [current[e].letter];
+        levels[current[e].level].frequency = current[e].frequency;
         if (i === a.length - 1) {
           levels[current[e].level].isWord = current[e].isWord;
         } else {
@@ -60,6 +75,7 @@ class Trie {
       } else {
         levels[current[e].level].letter = levels[current[e].level].letter.push(current[e].level);
         levels[current[e].level].isWord = current[e].isWord;
+        levels[current[e].level].frequency = current[e].frequency;
       }
       current = current[e].children;
     })
@@ -69,7 +85,8 @@ class Trie {
     }
 
     search(current);
-    return array.sort();
+    array = array.sort((a, b) => b.frequency - a.frequency).map(e => e.newWord);
+    return array;
 
     function search(node) {
       if (!node) {
@@ -79,8 +96,8 @@ class Trie {
         levelKeys.forEach(e => {
           newWord += levels[e].letter[0]
           if (levels[e].isWord) {
-            if (!array.includes(newWord)) {
-              array.push(newWord)
+            if (!array.map(e => e.newWord).includes(newWord)) {
+              array.push({newWord, frequency: levels[e].frequency})
             }
           }
         })
@@ -94,6 +111,7 @@ class Trie {
           levels[node[e].level] = {}
           levels[node[e].level].letter = [node[e].letter];
           levels[node[e].level].isWord = node[e].isWord;
+          levels[node[e].level].frequency = node[e].frequency;
         } else {
           let letter = node[e].letter;
           let levelArray = levels[node[e].level].letter;
@@ -110,6 +128,7 @@ class Trie {
           levels[node[e].level] = {}
           levels[node[e].level].letter = levelArray;
           levels[node[e].level].isWord = node[e].isWord;
+          levels[node[e].level].frequency = node[e].frequency;
         }
         search(node[e].children)
       })

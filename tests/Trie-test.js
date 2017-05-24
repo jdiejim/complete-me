@@ -70,23 +70,36 @@ describe('Trie', function () {
   })
 })
 
-describe('Trie with dictionary inserted', function () {
+describe('Trie with dictionary inserted', () => {
   const trie = new Trie();
 
   trie.populate(dictionary);
 
   it.only('Should be able to return null if there is no suggested word', () => {
-    let keyword = 'pol';
+    let keyword = 'apple';
     let filtered = dictionary.filter(e => e.substring(0, keyword.length) === keyword).sort();
 
+    trie.select(keyword);
+    trie.select('applenut');
+    trie.select('applenut');
+    trie.select('applewife');
     expect(trie.suggest(keyword)).to.deep.equal(filtered);
   })
 
-  it.only('Should be able to count the potential words previously inserted', () => {
+  it('Should be able to count the potential words previously inserted', () => {
 
     expect(trie.count()).to.equal(235886);
+  })
+
+  it.only('Should be able to return null if there is no suggested word', () => {
+    let keyword = 'apple';
+    // trie.select(keyword)
+    console.log(trie.select(keyword));
+
+    expect(0).to.deep.equal(0);
   })
 })
 
 // TODO: true test
 // TODO: true on each word if same name plus other lettres
+// TODO: wierd stuff
