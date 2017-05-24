@@ -1,7 +1,7 @@
 {
-  "name": "complete-me",
+  "name": "@jdiejim/complete-me",
   "version": "0.0.1",
-  "description": "",
+  "description": "JS library of prefix Trie class",
   "main": "index.js",
   "directories": {
     "test": "tests"
