@@ -68,12 +68,8 @@ class Trie {
     [...word].forEach((e, i, a) => {
       let {children, level, letter, isWord, frequency} = node[e];
 
-      levels[level] = { letter: [letter], frequency }
-      if (i === a.length - 1) {
-        levels[level].isWord = isWord;
-      } else {
-        levels[level].isWord = false;
-      }
+      levels[level] = { letter: [letter], frequency };
+      levels[level].isWord = i === a.length - 1 ? isWord : false;
       node = children;
     })
 
@@ -82,16 +78,16 @@ class Trie {
 
     function search(node) {
       if (!node) {
-        let newWord = ''
+        let newWord = '';
 
         levels.forEach(e => {
-          newWord += e.letter[0]
+          newWord += e.letter[0];
           if (e.isWord) {
             if (!array.map(e => e.newWord).includes(newWord)) {
               array.push({newWord, frequency: e.frequency})
             }
           }
-        })
+        });
         return null;
       }
 
@@ -99,7 +95,7 @@ class Trie {
         let {children, level, letter, isWord, frequency} = node[e];
 
         if (!levels[level]) {
-          levels[level] = { letter: [letter], isWord, frequency }
+          levels[level] = { letter: [letter], isWord, frequency };
         } else {
           let letterArray = levels[level].letter;
 
