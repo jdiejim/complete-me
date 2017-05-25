@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import Trie from '../scripts/Trie';
+import palabras from 'an-array-of-spanish-words';
 import fs from 'fs';
 
 const text = "/usr/share/dict/words";
@@ -126,5 +127,41 @@ describe('Trie with dictionary inserted', () => {
     suggestions = trie.suggest(keyword);
 
     expect(expectedWord).to.equal(select2);
+  })
+})
+
+describe('Trie with spanish dictionary inserted', () => {
+  const trie = new Trie();
+
+  trie.populate(palabras);
+
+  it('Should have a method that returns an array of suggestions by searching for a keyword', () => {
+    let keyword = 'hol';
+    let filtered = palabras.filter(e => e.substring(0, keyword.length) === keyword).sort();
+
+    let suggestions = trie.suggest(keyword).sort();
+
+    expect(suggestions).to.deep.equal(filtered);
+  })
+
+  it('Should have a method that counts inserted words', () => {
+    expect(trie.count()).to.equal(palabras.length);
+  })
+
+  it('Should have a method that selects a word, and it will appear at the top of suggestions', () => {
+    let keyword = 'bibl';
+    let select1 = 'biblioteca';
+    let filtered = palabras.filter(e => e.substring(0, keyword.length) === keyword).sort();
+
+    let suggestions = trie.suggest(keyword).sort();
+
+    expect(suggestions).to.deep.equal(filtered);
+
+    trie.select(select1);
+
+    suggestions = trie.suggest(keyword);
+    let expectedWord = suggestions[0];
+
+    expect(expectedWord).to.equal(select1);
   })
 })
