@@ -92,7 +92,7 @@ describe('Trie with dictionary inserted', () => {
   trie.populate(dictionary);
 
   it('Should have a method that returns an array of suggestions by searching for a keyword', () => {
-    let keyword = 'app';
+    let keyword = 'x';
     let filtered = dictionary.filter(e => e.substring(0, keyword.length) === keyword).sort();
 
     let suggestions = trie.suggest(keyword).sort();

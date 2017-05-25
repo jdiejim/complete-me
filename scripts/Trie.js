@@ -57,79 +57,58 @@ class Trie {
   }
 
   suggest(word = '') {
-    let current = this.root.children
-    let array = [];
-    let levels = {};
-
-    [...word].forEach((e, i, a) => {
-      if (!levels[current[e].level]) {
-        levels[current[e].level] = {}
-        levels[current[e].level].letter = [current[e].letter];
-        levels[current[e].level].frequency = current[e].frequency;
-        if (i === a.length - 1) {
-          levels[current[e].level].isWord = current[e].isWord;
-        } else {
-          levels[current[e].level].isWord = false;
-        }
-      } else {
-        levels[current[e].level].letter = levels[current[e].level].letter.push(current[e].level);
-        levels[current[e].level].isWord = current[e].isWord;
-        levels[current[e].level].frequency = current[e].frequency;
-      }
-      current = current[e].children;
-    })
-
     if (word === '') {
       return null;
     }
 
-    search(current);
-    array = array.sort((a, b) => b.frequency - a.frequency).map(e => e.newWord);
-    return array;
+    let node = this.root.children
+    let array = [];
+    let levels = [];
+
+    [...word].forEach((e, i, a) => {
+      let {children, level, letter, isWord, frequency} = node[e];
+
+      levels[level] = { letter: [letter], frequency }
+      if (i === a.length - 1) {
+        levels[level].isWord = isWord;
+      } else {
+        levels[level].isWord = false;
+      }
+      node = children;
+    })
+
+    search(node);
+    return array.sort((a, b) => b.frequency - a.frequency).map(e => e.newWord);
 
     function search(node) {
       if (!node) {
-        let levelKeys = Object.keys(levels);
         let newWord = ''
 
-        levelKeys.forEach(e => {
-          newWord += levels[e].letter[0]
-          if (levels[e].isWord) {
+        levels.forEach(e => {
+          newWord += e.letter[0]
+          if (e.isWord) {
             if (!array.map(e => e.newWord).includes(newWord)) {
-              array.push({newWord, frequency: levels[e].frequency})
+              array.push({newWord, frequency: e.frequency})
             }
           }
         })
         return null;
       }
 
-      let keys = Object.keys(node);
+      Object.keys(node).forEach(e => {
+        let {children, level, letter, isWord, frequency} = node[e];
 
-      keys.forEach(e => {
-        if (!levels[node[e].level]) {
-          levels[node[e].level] = {}
-          levels[node[e].level].letter = [node[e].letter];
-          levels[node[e].level].isWord = node[e].isWord;
-          levels[node[e].level].frequency = node[e].frequency;
+        if (!levels[level]) {
+          levels[level] = { letter: [letter], isWord, frequency }
         } else {
-          let letter = node[e].letter;
-          let levelArray = levels[node[e].level].letter;
+          let letterArray = levels[level].letter;
 
-          levelArray.shift();
-          levelArray.push(letter);
-
-          let obj = {};
-
-          for (let i = 0; i < node[e].level; i++) {
-            obj[i] = levels[i]
-          }
-          levels = obj;
-          levels[node[e].level] = {}
-          levels[node[e].level].letter = levelArray;
-          levels[node[e].level].isWord = node[e].isWord;
-          levels[node[e].level].frequency = node[e].frequency;
+          letterArray.shift();
+          letterArray.push(letter);
+          levels.splice(level);
+          levels[level] = { letter: letterArray, isWord, frequency };
         }
-        search(node[e].children)
+        search(children);
       })
     }
   }
